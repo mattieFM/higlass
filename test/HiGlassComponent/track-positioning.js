@@ -12,7 +12,7 @@ import {
   waitForTilesLoaded,
   getTrackByUid,
   totalTrackPixelHeight,
-} from '../../app/scripts/utils';
+} from '../../packages/core/src/scripts/utils';
 
 import {
   horizontalDiagonalTrackViewConf,

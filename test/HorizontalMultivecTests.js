@@ -11,7 +11,7 @@ import {
   mountHGComponent,
   removeHGComponent,
   getTrackObjectFromHGC,
-} from '../app/scripts/utils';
+} from '../packages/core/src/scripts/utils';
 
 // View configs
 import horizontalMultivecWithSmallerDimensions from './view-configs-more/horizontalMultivecWithSmallerDimensions.json';
@@ -23,7 +23,7 @@ import horizontalMultivecWithAggregation from './view-configs-more/horizontalMul
 import {
   MIN_HORIZONTAL_HEIGHT,
   MIN_VERTICAL_WIDTH,
-} from '../app/scripts/configs';
+} from '../packages/core/src/scripts/configs';
 
 Enzyme.configure({ adapter: new Adapter() });
 

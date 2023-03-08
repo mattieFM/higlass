@@ -12,14 +12,14 @@ import {
   getTrackObjectFromHGC,
   waitForTransitionsFinished,
   waitForTilesLoaded,
-} from '../app/scripts/utils';
+} from '../packages/core/src/scripts/utils';
 
 import viewConf1DHorizontal from './view-configs/continuous-scaling-1D-horizontal.json';
 import viewConf1DVertical from './view-configs/continuous-scaling-1D-vertical.json';
 import viewConf2D from './view-configs/continuous-scaling-2D.json';
 
-import DenseDataExtrema1D from '../app/scripts/utils/DenseDataExtrema1D';
-import DenseDataExtrema2D from '../app/scripts/utils/DenseDataExtrema2D';
+import DenseDataExtrema1D from '../packages/core/src/scripts/utils/DenseDataExtrema1D';
+import DenseDataExtrema2D from '../packages/core/src/scripts/utils/DenseDataExtrema2D';
 import { vecToy, vecRealistic } from './testdata/vector-data';
 import { matToy, matRealistic } from './testdata/matrix-data';
 

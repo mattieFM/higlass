@@ -4,11 +4,11 @@ import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
 import { expect } from 'chai';
 
 // Utils
-import { removeHGComponent } from '../app/scripts/utils';
+import { removeHGComponent } from '../packages/core/src/scripts/utils';
 
 import { osmConf } from './view-configs';
 
-import { viewer } from '../app/scripts/hglib';
+import { viewer } from '../packages/core/src/scripts/hglib';
 
 Enzyme.configure({ adapter: new Adapter() });
 

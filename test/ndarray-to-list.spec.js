@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 import { expect } from 'chai';
 import ndarray from 'ndarray';
-import ndarrayToList from '../app/scripts/utils/ndarray-to-list';
+import ndarrayToList from '../packages/core/src/scripts/utils/ndarray-to-list';
 
 describe('ndarrayToList()', () => {
   it('should work with numerical', () => {

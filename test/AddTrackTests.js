@@ -11,7 +11,7 @@ import {
   removeHGComponent,
   waitForTilesLoaded,
   waitForJsonComplete,
-} from '../app/scripts/utils';
+} from '../packages/core/src/scripts/utils';
 
 Enzyme.configure({ adapter: new Adapter() });
 
@@ -30,7 +30,7 @@ describe('Add track(s)', () => {
     // this was to test an example from the higlass-website demo page
     // where the issue was that the genome position search box was being
     // styled with a margin-bottom of 10px, fixed by setting the style of
-    // genome-position-search to specify margin-bottom app/styles/GenomePositionSearchBox.css
+    // genome-position-search to specify margin-bottom packages/core/styles/GenomePositionSearchBox.css
     hgc.instance().tiledPlots.aa.handleAddTrack('top');
     hgc.update();
 

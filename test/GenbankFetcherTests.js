@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 import { expect } from 'chai';
-import GBKDataFetcher from '../app/scripts/data-fetchers/genbank-fetcher';
+import GBKDataFetcher from '../packages/core/src/scripts/data-fetchers/genbank-fetcher';
 
 describe('Genbank tests', () => {
   describe('Genbank data fetcher', () => {

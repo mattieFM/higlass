@@ -9,7 +9,7 @@ import {
   removeHGComponent,
   getTrackObjectFromHGC,
   waitForTilesLoaded,
-} from '../app/scripts/utils';
+} from '../packages/core/src/scripts/utils';
 
 import { exportDataConfig } from './view-configs';
 

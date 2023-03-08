@@ -7,7 +7,7 @@ import {
   mountHGComponent,
   removeHGComponent,
   getTrackObjectFromHGC,
-} from '../app/scripts/utils';
+} from '../packages/core/src/scripts/utils';
 
 import viewconf from './view-configs/label-margin.json';
 import viewconfSplitHeatmaps from './view-configs/label-split-heatmaps.json';

@@ -9,7 +9,7 @@ import {
   waitForTilesLoaded,
   getTrackObjectFromHGC,
   getTrackByUid,
-} from '../../app/scripts/utils';
+} from '../../packages/core/src/scripts/utils';
 
 import { rectangleDomains } from '../view-configs';
 

@@ -1,0 +1,1 @@
+export { default as AVAILABLE_FOR_PLUGINS } from './available-for-plugins';

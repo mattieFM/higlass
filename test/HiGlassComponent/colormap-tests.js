@@ -6,9 +6,9 @@ import {
   mountHGComponent,
   removeHGComponent,
   // waitForTilesLoaded,
-} from '../../app/scripts/utils';
+} from '../../packages/core/src/scripts/utils';
 
-// import HeatmapOptions from '../../app/scripts/HeatmapOptions';
+// import HeatmapOptions from '../../packages/core/src/scripts/HeatmapOptions';
 
 import { twoViewConfig } from '../view-configs';
 

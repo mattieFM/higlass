@@ -8,7 +8,7 @@ import {
   removeHGComponent,
   waitForTilesLoaded,
   scalesCenterAndK,
-} from '../../app/scripts/utils';
+} from '../../packages/core/src/scripts/utils';
 
 import { threeViews } from '../view-configs';
 

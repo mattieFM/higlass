@@ -9,9 +9,9 @@ import {
   mountHGComponent,
   removeHGComponent,
   waitForTransitionsFinished,
-} from '../app/scripts/utils';
+} from '../packages/core/src/scripts/utils';
 
-import schema from '../app/schema.json';
+import schema from '../packages/core/schema.json';
 import viewconf from './view-configs/axis-specific-location-locks.json';
 
 Enzyme.configure({ adapter: new Adapter() });

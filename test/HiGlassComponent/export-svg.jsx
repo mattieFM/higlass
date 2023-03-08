@@ -8,9 +8,9 @@ import {
   mountHGComponentAsync,
   removeHGComponent,
   waitForTilesLoaded,
-} from '../../app/scripts/utils';
+} from '../../packages/core/src/scripts/utils';
 
-import HiGlassComponent from '../../app/scripts/HiGlassComponent';
+import HiGlassComponent from '../../packages/core/src/scripts/HiGlassComponent';
 
 import { testViewConfX1, project1D } from '../view-configs';
 

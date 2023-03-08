@@ -9,7 +9,7 @@ import {
   getTrackObjectFromHGC,
   mountHGComponent,
   removeHGComponent,
-} from '../app/scripts/utils';
+} from '../packages/core/src/scripts/utils';
 
 import viewconf from './view-configs/loop-annotations';
 

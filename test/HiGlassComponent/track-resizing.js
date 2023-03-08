@@ -9,7 +9,7 @@ import {
   waitForTilesLoaded,
   getTrackObjectFromHGC,
   getTiledPlot,
-} from '../../app/scripts/utils';
+} from '../../packages/core/src/scripts/utils';
 
 import { oneTrackConfig } from '../view-configs';
 

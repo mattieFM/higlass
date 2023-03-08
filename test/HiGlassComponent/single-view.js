@@ -8,7 +8,7 @@ import {
   removeHGComponent,
   getTrackObjectFromHGC,
   waitForTilesLoaded,
-} from '../../app/scripts/utils';
+} from '../../packages/core/src/scripts/utils';
 
 import { oneViewConfig } from '../view-configs';
 

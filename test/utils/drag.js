@@ -1,4 +1,4 @@
-import { getTrackRenderer } from '../../app/scripts/utils';
+import { getTrackRenderer } from '../../packages/core/src/scripts/utils';
 
 const drag = (fromX, fromY, toX, toY, viewId, hgc) => {
   // simulate a zoom drag event by doing a

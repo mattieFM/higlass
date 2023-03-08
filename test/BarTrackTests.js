@@ -10,7 +10,7 @@ import {
   removeHGComponent,
   getTrackObjectFromHGC,
   waitForTilesLoaded,
-} from '../app/scripts/utils';
+} from '../packages/core/src/scripts/utils';
 
 import viewConf from './view-configs/bar.json';
 

@@ -3,8 +3,8 @@ import { expect } from 'chai';
 
 import tileProxy, {
   tileDataToPixData,
-} from '../app/scripts/services/tile-proxy';
-import { fake as fakePubSub } from '../app/scripts/hocs/with-pub-sub';
+} from '../packages/core/src/scripts/services/tile-proxy';
+import { fake as fakePubSub } from '../packages/core/src/scripts/hocs/with-pub-sub';
 import {
   multivecTileData,
   multivecTileDataWithServerAggregation,

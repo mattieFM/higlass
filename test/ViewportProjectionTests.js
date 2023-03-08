@@ -6,7 +6,7 @@ import {
   waitForTilesLoaded,
   getTrackObjectFromHGC,
   waitForTransitionsFinished,
-} from '../app/scripts/utils';
+} from '../packages/core/src/scripts/utils';
 
 import { topAxisOnly } from './view-configs';
 

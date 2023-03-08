@@ -12,7 +12,7 @@ import {
   getTrackByUid,
   getTrackObjectFromHGC,
   mountHGComponentAsync,
-} from '../../app/scripts/utils';
+} from '../../packages/core/src/scripts/utils';
 
 import { twoViewConfig, chromInfoTrack } from '../view-configs';
 

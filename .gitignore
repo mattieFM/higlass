@@ -1,4 +1,4 @@
-app/local
+packages/core/local
 yarn.lock
 build/
 docs/_build/
@@ -26,4 +26,4 @@ docs/_build
 webpack-stats.json
 dist
 lib/vendor
-app/test*.html
+packages/core/test*.html

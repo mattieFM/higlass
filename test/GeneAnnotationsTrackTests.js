@@ -11,7 +11,7 @@ import {
   waitForTilesLoaded,
   getTrackConfFromHGC,
   getTrackObjectFromHGC,
-} from '../app/scripts/utils';
+} from '../packages/core/src/scripts/utils';
 
 import removeDiv from './utils/remove-div';
 

@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 import { expect } from 'chai';
 import ndarray from 'ndarray';
-import ndarrayAssign from '../app/scripts/utils/ndarray-assign';
+import ndarrayAssign from '../packages/core/src/scripts/utils/ndarray-assign';
 
 describe('ndarrayAssign()', () => {
   let v;

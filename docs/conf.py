@@ -38,7 +38,7 @@ from docutils.parsers.rst import Directive, directives
 # ones.
 extensions = ['sphinx.ext.viewcode', 'sphinx.ext.imgmath', 'sphinx.ext.todo', 'sphinx.ext.autodoc', 'sphinx.ext.napoleon', 'sphinx_js']
 
-js_source_path = '../app/scripts/'
+js_source_path = '../packages/core/src/scripts/'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

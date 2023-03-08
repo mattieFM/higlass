@@ -7,7 +7,7 @@ import {
   mountHGComponent,
   removeHGComponent,
   getTrackObjectFromHGC,
-} from '../../app/scripts/utils';
+} from '../../packages/core/src/scripts/utils';
 
 import { geneAnnotationsOnly } from '../view-configs';
 

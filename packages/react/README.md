@@ -1,0 +1,1 @@
+The main `higlass` NPM package that uses `@higlass/core` and create and export `<HiGlassComponent/>`.

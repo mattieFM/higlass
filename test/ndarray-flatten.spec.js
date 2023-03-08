@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 import { expect } from 'chai';
 import ndarray from 'ndarray';
-import ndarrayFlatten from '../app/scripts/utils/ndarray-flatten';
+import ndarrayFlatten from '../packages/core/src/scripts/utils/ndarray-flatten';
 
 describe('ndarrayFlatten()', () => {
   it('should work on vectors', () => {

@@ -33,7 +33,7 @@ checked in as fixtures. If you want to validate just one viewconf by hand:
 .. code-block:: bash
 
   npm install -g ajv-cli
-  ajv validate -s app/schema.json -d docs/examples/viewconfs/default.json
+  ajv validate -s packages/core/schema.json -d docs/examples/viewconfs/default.json
 
 Boilerplate
 -----------
@@ -59,7 +59,7 @@ add a line to `karma.conf.js` to include it in the tests.
       mountHGComponent,
       removeHGComponent,
       getTrackObjectFromHGC
-    } from '../app/scripts/utils';
+    } from '../packages/core/src/scripts/utils';
 
     configure({ adapter: new Adapter() });
 
@@ -116,7 +116,7 @@ To get the track object associated with a view and track uid:
 
     import {
         getTrackObjectFromHGC
-    } from '../app/scripts/utils';
+    } from '../packages/core/src/scripts/utils';
 
     const trackObj = getTrackObjectFromHGC(hgc.instance(),
         'view_uid', 'track_uid')

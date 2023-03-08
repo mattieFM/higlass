@@ -32,7 +32,7 @@ jobs:
         with:
           node-version: '16.x'
       - run: npm install -g ajv-cli
-      - run: ajv validate -s app/schema.json -d "{docs/examples/viewconfs,test/{view-configs,view-configs-more}}/*.json"
+      - run: ajv validate -s packages/core/schema.json -d "{docs/examples/viewconfs,test/{view-configs,view-configs-more}}/*.json"
 
   Test:
     runs-on: ubuntu-latest

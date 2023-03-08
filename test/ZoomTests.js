@@ -3,7 +3,7 @@ import { spyOn } from 'tinyspy';
 import { expect } from 'chai';
 
 // Utils
-import { getTrackRenderer } from '../app/scripts/utils';
+import { getTrackRenderer } from '../packages/core/src/scripts/utils';
 
 import createElementAndApi from './utils/create-element-and-api';
 import removeDiv from './utils/remove-div';

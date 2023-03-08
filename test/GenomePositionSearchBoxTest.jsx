@@ -5,13 +5,13 @@ import { expect } from 'chai';
 
 import React from 'react';
 
-import HiGlassComponent from '../app/scripts/HiGlassComponent';
+import HiGlassComponent from '../packages/core/src/scripts/HiGlassComponent';
 
 import {
   waitForJsonComplete,
   waitForTilesLoaded,
   waitForTransitionsFinished,
-} from '../app/scripts/utils';
+} from '../packages/core/src/scripts/utils';
 
 import createElementAndApi from './utils/create-element-and-api';
 import removeDiv from './utils/remove-div';

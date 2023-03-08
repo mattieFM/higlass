@@ -9,7 +9,7 @@ import {
   removeHGComponent,
   getTrackObjectFromHGC,
   getTrackRenderer,
-} from '../app/scripts/utils';
+} from '../packages/core/src/scripts/utils';
 
 Enzyme.configure({ adapter: new Adapter() });
 

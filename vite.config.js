@@ -80,7 +80,7 @@ export default defineConfig(({ mode }) => {
       ? {
           minify: false,
           lib: {
-            entry: path.resolve(__dirname, 'app/scripts/hglib.jsx'),
+            entry: path.resolve(__dirname, 'packages/core/scripts/hglib.jsx'),
             name: 'hglib',
             formats: ['umd'],
           },
@@ -99,7 +99,7 @@ export default defineConfig(({ mode }) => {
   return {
     resolve: {
       alias: {
-        slugid: path.resolve(__dirname, './app/bufferless-slugid.js'),
+        slugid: path.resolve(__dirname, './packages/core/src/bufferless-slugid.js'),
         lodash: 'lodash-es',
       },
     },

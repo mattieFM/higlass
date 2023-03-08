@@ -7,7 +7,7 @@ import {
   mountHGComponent,
   removeHGComponent,
   waitForJsonComplete,
-} from '../../app/scripts/utils';
+} from '../../packages/core/src/scripts/utils';
 
 import { oneZoomedOutViewConf, chromosomeGridTrack } from '../view-configs';
 

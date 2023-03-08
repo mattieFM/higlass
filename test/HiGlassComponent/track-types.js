@@ -7,7 +7,7 @@ import {
   mountHGComponent,
   removeHGComponent,
   getTrackByUid,
-} from '../../app/scripts/utils';
+} from '../../packages/core/src/scripts/utils';
 
 import { annotationsTilesView } from '../view-configs';
 

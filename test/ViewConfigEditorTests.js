@@ -10,7 +10,7 @@ import {
   waitForTilesLoaded,
   getTrackObjectFromHGC,
   waitForJsonComplete,
-} from '../app/scripts/utils';
+} from '../packages/core/src/scripts/utils';
 import viewConf from './view-configs/simple-heatmap-gene-annotations.json';
 
 Enzyme.configure({ adapter: new Adapter() });

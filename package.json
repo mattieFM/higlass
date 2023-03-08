@@ -7,7 +7,7 @@
   "unpkg": "dist/hglib.min.js",
   "jsdelivr": "dist/hglib.min.js",
   "files": [
-    "app",
+    "packages",
     "dist"
   ],
   "keywords": [
@@ -21,8 +21,8 @@
     "start": "vite",
     "build": "vite build",
     "optimize": "vite optimize",
-    "compile": "npm run build && node ./scripts/compile.mjs && zip -r dist.zip dist",
-    "lint": "eslint app test vite.config.js web-test-runner.config.mjs",
+    "compile": "pnpm build && node ./scripts/compile.mjs && zip -r dist.zip dist",
+    "lint": "eslint packages test vite.config.js web-test-runner.config.mjs",
     "precommit": "NODE_ENV=production lint-staged"
   },
   "repository": {

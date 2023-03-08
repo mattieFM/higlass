@@ -2,9 +2,9 @@
 import { expect } from 'chai';
 
 // Utils
-import { visitPositionedTracks } from '../app/scripts/utils';
-import selectedItemsToSize from '../app/scripts/utils/selected-items-to-size';
-import selectedItemsToCumWeights from '../app/scripts/utils/selected-items-to-cum-weights';
+import { visitPositionedTracks } from '../packages/core/src/scripts/utils';
+import selectedItemsToSize from '../packages/core/src/scripts/utils/selected-items-to-size';
+import selectedItemsToCumWeights from '../packages/core/src/scripts/utils/selected-items-to-cum-weights';
 
 import { oneViewConfig } from './view-configs';
 

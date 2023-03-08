@@ -6,9 +6,9 @@ import { expect } from 'chai';
 import { simpleCenterViewConfig } from './view-configs';
 
 // Utils
-import { removeHGComponent } from '../app/scripts/utils';
+import { removeHGComponent } from '../packages/core/src/scripts/utils';
 
-import { viewer } from '../app/scripts/hglib';
+import { viewer } from '../packages/core/src/scripts/hglib';
 
 Enzyme.configure({ adapter: new Adapter() });
 

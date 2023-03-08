@@ -6,7 +6,7 @@ import { expect } from 'chai';
 import {
   getTrackObjectFromHGC,
   waitForTilesLoaded,
-} from '../app/scripts/utils';
+} from '../packages/core/src/scripts/utils';
 
 import createElementAndApi from './utils/create-element-and-api';
 import removeDiv from './utils/remove-div';
