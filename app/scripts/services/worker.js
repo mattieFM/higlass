@@ -64,7 +64,7 @@ function setPixDataForSelectedRows(
         d = aggFromDataFunc(
           colI,
           // @ts-expect-error - selectedRows[selectedRowI] is number[] but TS can't infer that from
-          selectedRows[selectedRowI]
+          selectedRows[selectedRowI],
         );
       } else {
         // @ts-expect-error - selectedRows[selectedRowI] is number but TS can't infer that from
@@ -355,11 +355,27 @@ function uint16ArrayToFloat32Array(uint16array) {
 }
 
 /**
+ * @param {string} base64EncodedData
+ * @param {string} [dtype]
+ */
+function base64DenseDataToFloat32Array(base64EncodedData, dtype) {
+  const arrayBuffer = base64ToArrayBuffer(base64EncodedData);
+  if (dtype === 'float16') {
+    // data is encoded as float16s
+    /* comment out until next empty line for 32 bit arrays */
+    const uint16Array = new Uint16Array(arrayBuffer);
+    return uint16ArrayToFloat32Array(uint16Array);
+  }
+  // data is encoded as float32s
+  return new Float32Array(arrayBuffer);
+}
+
+/**
  * @typedef TileData<Server>
  * @property {string} server
  * @property {string} tileId
  * @property {number} zoomLevel
- * @property {[number] | [number, number]} tilePos
+ * @property {number[]} tilePos
  * @property {string} tilesetUid
  */
 
@@ -368,7 +384,7 @@ function uint16ArrayToFloat32Array(uint16array) {
  * @property {string} server
  * @property {string} tileId
  * @property {number} zoomLevel
- * @property {[number] | [number, number]} tilePos
+ * @property {number[]} tilePos
  * @property {string} tilesetUid
  * @property {Float32Array} dense
  * @property {string} dtype
@@ -385,7 +401,20 @@ function uint16ArrayToFloat32Array(uint16array) {
 /**
  * @typedef TileResponse
  * @property {string=} dense - a base64 encoded string
+ * @property {string=} dtype - the dtype of the dense array
  */
+
+/**
+ * @param {string} tileId
+ * @returns {[tilesetUid: string, zoomLevel: number, tilePos: [number] | [number, number]]}
+ */
+function extractKeyParts(tileId) {
+  const [tilesetUid, zoomLevelString, ...remainingParts] = tileId.split('.');
+  /** @type {[number, number] | [number]} */
+  // @ts-expect-error - We could verify this with a custom type-gaurd
+  const tilePos = remainingParts.map((x) => +x).filter((x) => !Number.isNaN(x));
+  return [tilesetUid, +zoomLevelString, tilePos];
+}
 
 /**
  * Convert a response from the tile server to data that can be used by higlass.
@@ -393,7 +422,7 @@ function uint16ArrayToFloat32Array(uint16array) {
  * WARNING: Mutates the data object.
  *
  * @template {TileResponse} T
- * @param {Record<string, T>} inputData
+ * @param {Record<string, T>} tileResponses
  * @param {string} server
  * @param {string[]} theseTileIds
  *
@@ -404,68 +433,46 @@ function uint16ArrayToFloat32Array(uint16array) {
  * The type signature of the function tries to adequately describe the mutation,
  * to outside users.
  */
-export function tileResponseToData(inputData, server, theseTileIds) {
-  /** @type {Record<string, Partial<DenseTileData>>} */
-  // @ts-expect-error - This function works by overriing all the properties of inputData
-  // It's not great, but I don't want to touch the implementation.
-  const data = inputData ?? {};
+export function tileResponseToData(tileResponses, server, theseTileIds) {
+  /** @type {Record<string, CompletedTileData<T>>} */
+  const output = {};
 
-  for (const thisId of theseTileIds) {
-    if (!(thisId in data)) {
-      // the server didn't return any data for this tile
-      data[thisId] = {};
-    }
-    const key = thisId;
-    // let's hope the payload doesn't contain a tileId field
-    const keyParts = key.split('.');
+  for (const tileId of theseTileIds) {
+    const tileResponse = tileResponses[tileId] ?? {};
+    const [tilesetUid, zoomLevel, tilePos] = extractKeyParts(tileId);
 
-    data[key].server = server;
-    data[key].tileId = key;
-    data[key].zoomLevel = +keyParts[1];
-
-    // slice from position 2 to exclude tileId and zoomLevel
-    // filter by NaN to exclude metadata portions of the tile request
-    /** @type {[number] | [number, number]} */
-    // @ts-expect-error - tilePos is [number] or [number, number]
-    const tilePos = keyParts
-      .slice(2, keyParts.length)
-      .map((x) => +x)
-      .filter((x) => !Number.isNaN(x));
-    data[key].tilePos = tilePos;
-    data[key].tilesetUid = keyParts[0];
-
-    if ('dense' in data[key]) {
-      /** @type {string} */
-      // @ts-expect-error - The input of this function requires that dense is a string
-      // We are overriding the property on the input object, so TS is upset.
-      const base64 = data[key].dense;
-      const arrayBuffer = base64ToArrayBuffer(base64);
-      let a;
-
-      if (data[key].dtype === 'float16') {
-        // data is encoded as float16s
-        /* comment out until next empty line for 32 bit arrays */
-        const uint16Array = new Uint16Array(arrayBuffer);
-        const newDense = uint16ArrayToFloat32Array(uint16Array);
-        a = newDense;
-      } else {
-        // data is encoded as float32s
-        a = new Float32Array(arrayBuffer);
-      }
-
-      const dde = tilePos.length === 2
-          ? new DenseDataExtrema2D(a)
-          : new DenseDataExtrema1D(a);
-
-      data[key].dense = a;
-      data[key].denseDataExtrema = dde;
-      data[key].minNonZero = dde.minNonZeroInTile;
-      data[key].maxNonZero = dde.maxNonZeroInTile;
+    if (tileResponse.dense) {
+      const dense = base64DenseDataToFloat32Array(
+        tileResponse.dense,
+        tileResponse.dtype,
+      );
+      const denseDataExtrema =
+        tilePos.length === 2
+          ? new DenseDataExtrema2D(dense)
+          : new DenseDataExtrema1D(dense);
+      output[tileId] = Object.assign(tileResponse, {
+        server,
+        tileId,
+        tilePos,
+        zoomLevel,
+        tilesetUid,
+        dense,
+        denseDataExtrema,
+        minNonZero: denseDataExtrema.minNonZeroInTile,
+        maxNonZero: denseDataExtrema.maxNonZeroInTile,
+      });
+    } else {
+      output[tileId] = Object.assign(tileResponse, {
+        server,
+        tileId,
+        tilePos,
+        zoomLevel,
+        tilesetUid,
+      });
     }
   }
 
-  // @ts-expect-error - We have completed the tile data.
-  return data;
+  return output;
 }
 
 /**
