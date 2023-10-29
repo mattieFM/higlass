@@ -17,12 +17,12 @@ export const pixiTextToSvg = (pixiText) => {
     t.setAttribute('text-anchor', 'middle');
   }
 
-  // @ts-ignore Where this function is invoked in HorizontalChromosomeLabels, pixiText.style.fontFamily is always a string
+  // @ts-expect-error Where this function is invoked in HorizontalChromosomeLabels, pixiText.style.fontFamily is always a string
   t.setAttribute('font-family', pixiText.style.fontFamily); 
-  // @ts-ignore Where this function is invoked in HorizontalChromosomeLabels, pixiText.style.fontSize is always a string
+  // @ts-expect-error Where this function is invoked in HorizontalChromosomeLabels, pixiText.style.fontSize is always a string
   t.setAttribute('font-size', pixiText.style.fontSize);
   g.setAttribute('transform', `scale(${pixiText.scale.x},1)`);
-  // @ts-ignore Where this function is invoked in HorizontalChromosomeLabels, pixiText.style.fill is always a string
+  // @ts-expect-error Where this function is invoked in HorizontalChromosomeLabels, pixiText.style.fill is always a string
   t.setAttribute('fill', pixiText.style.fill);
   t.innerHTML = pixiText.text;
 
