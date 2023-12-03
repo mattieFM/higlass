@@ -19,6 +19,7 @@ import { tileProxy } from '../services';
  * @typedef {import('../types').AbstractDataFetcher<T>} AbstractDataFetcher
  */
 
+
 /**
  * @typedef Tile
  * @property {number} min_value
@@ -47,6 +48,15 @@ import { tileProxy } from '../services';
  */
 function isTuple(x) {
   return x.length === 2;
+}
+
+/**
+ * @param {Tile | DividedTile} tile
+ * @returns {tile is DividedTile}
+ */
+export function isDividedTile(tile) {
+  // This is a hack but the derived divided tiles omit the `server` property
+  return !('server' in tile);
 }
 
 /** @implements {AbstractDataFetcher<Tile | DividedTile>} */

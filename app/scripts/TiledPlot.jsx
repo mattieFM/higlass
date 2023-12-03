@@ -187,7 +187,7 @@ class TiledPlot extends React.Component {
     this.canvasElement = ReactDOM.findDOMNode(this.props.canvasElement);
 
     // new ResizeSensor(this.element, this.measureSize.bind(this));
-    this.waitForDOMAttachment(() => {
+    // this.waitForDOMAttachment(() => {
       ElementQueries.listen();
       this.resizeSensor = new ResizeSensor(
         this.element.parentNode,
@@ -195,7 +195,7 @@ class TiledPlot extends React.Component {
       );
 
       this.measureSize();
-    });
+    // });
 
     // add event listeners for drag and drop events
     this.addEventListeners();
@@ -1630,8 +1630,13 @@ class TiledPlot extends React.Component {
    */
   getIdealizedTrackPositionsOverlay() {
     const evtJson = this.props.draggingHappening;
-    const datatype = evtJson.datatype;
 
+    // Rest of function assumes evtJson is an object but sometimes it's a boolean?
+    if (typeof evtJson === 'boolean') {
+      return undefined;
+    }
+
+    const datatype = evtJson.datatype;
     if (!(datatype in DEFAULT_TRACKS_FOR_DATATYPE) && !evtJson.defaultTracks) {
       console.warn('unknown data type:', evtJson.higlassTrack);
       return undefined;

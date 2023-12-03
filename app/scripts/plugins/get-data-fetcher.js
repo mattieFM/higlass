@@ -3,6 +3,7 @@ import {
   DataFetcher,
   GBKDataFetcher,
   LocalDataFetcher,
+  StackedDataFetcher
 } from '../data-fetchers';
 // TODO: we need to address this cyclic dependency
 import { AVAILABLE_FOR_PLUGINS } from '.';
@@ -30,6 +31,10 @@ const getDataFetcher = (
 
   if (dataConfig.type === 'local-tiles') {
     return new LocalDataFetcher(dataConfig, pubSub);
+  }
+
+  if (dataConfig.type === 'stacked') {
+    return new StackedDataFetcher(dataConfig, pubSub);
   }
 
   return new DataFetcher(dataConfig, pubSub);
