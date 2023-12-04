@@ -19,7 +19,6 @@ import { tileProxy } from '../services';
  * @typedef {import('../types').AbstractDataFetcher<T>} AbstractDataFetcher
  */
 
-
 /**
  * @typedef Tile
  * @property {number} min_value

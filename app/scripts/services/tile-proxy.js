@@ -151,29 +151,10 @@ export const setTileProxyAuthHeader = (newHeader) => {
 
 export const getTileProxyAuthHeader = () => authHeader;
 
-
-const seenIds = new Set();
-window.seenIds = seenIds;
-
 export function fetchMultiRequestTiles(req, pubSub) {
   const requests = req.requests;
 
-  let size = 0;
-  requests.forEach(r => {
-    r.ids.forEach(id => {
-      if (seenIds.has(id)) {
-        console.warn(`duplicate tile request: ${id}`);
-      } else {
-        seenIds.add(id);
-      }
-      size += 1;
-    });
-  })
-  console.log(`fetchMultiRequestTiles: ${size} tiles`);
-
-
   const fetchPromises = [];
-
   const requestsByServer = {};
   const requestBodyByServer = {};
 

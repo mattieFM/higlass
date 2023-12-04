@@ -3,7 +3,7 @@ import {
   DataFetcher,
   GBKDataFetcher,
   LocalDataFetcher,
-  StackedDataFetcher
+  StackedDataFetcher,
 } from '../data-fetchers';
 // TODO: we need to address this cyclic dependency
 import { AVAILABLE_FOR_PLUGINS } from '.';

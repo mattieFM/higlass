@@ -189,13 +189,13 @@ class TiledPlot extends React.Component {
 
     // new ResizeSensor(this.element, this.measureSize.bind(this));
     // this.waitForDOMAttachment(() => {
-      ElementQueries.listen();
-      this.resizeSensor = new ResizeSensor(
-        this.element.parentNode,
-        this.measureSize.bind(this),
-      );
+    ElementQueries.listen();
+    this.resizeSensor = new ResizeSensor(
+      this.element.parentNode,
+      this.measureSize.bind(this),
+    );
 
-      this.measureSize();
+    this.measureSize();
     // });
 
     // add event listeners for drag and drop events
