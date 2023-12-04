@@ -67,6 +67,7 @@
     "prismjs": "^1.16.0",
     "prop-types": "^15.6.0",
     "pub-sub-es": "^2.0.1",
+    "quick-lru": "^7.0.0",
     "react-checkbox-tree": "^1.7.3",
     "react-color": "^2.13.8",
     "react-grid-layout": "^0.16.6",

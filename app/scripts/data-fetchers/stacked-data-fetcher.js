@@ -1,3 +1,4 @@
+import QuickLRU from "quick-lru";
 import DataFetcher, { isDividedTile } from "./DataFetcher";
 
 /** @typedef {import('./DataFetcher').Tile} Tile */
@@ -40,18 +41,76 @@ function assertTilesetsAreStackable(infos) {
 }
 
 /**
-  * @param {Record<string, Tile | import('./DataFetcher').DividedTile>} tiles
-  * @returns {asserts tiles is Record<string, Tile>}
-  */
-function assertNoDividedTiles(tiles) {
-  for (const tile of Object.values(tiles)) {
-    assert(!isDividedTile(tile), "Found divided tile");
+ * @param {DataFetcher} dataFetcher
+ * @param {{ maxSize?: number }} options
+ * @returns {AbstractDataFetcher<Tile> & { clearCache: () => void, name?: string }}
+ */
+function cache(dataFetcher, { maxSize = 20 } = {}) {
+  /** @type {TilesetInfo | undefined} */
+  let tsInfo;
+
+  /** @type {Map<string, Tile>} */
+  const tileCache = new QuickLRU({ maxSize });
+
+  return {
+    get name() {
+      // @ts-expect-error - We know the dataConfig is set
+      return dataFetcher.dataConfig.name;
+    },
+    async tilesetInfo(callback) {
+      if (tsInfo) {
+        callback?.(tsInfo);
+        return tsInfo;
+      }
+      return dataFetcher.tilesetInfo((info) => {
+        assert(info !== null, "tilesetInfo is null");
+        if ("error" in info) {
+          callback?.(info);
+          throw info;
+        }
+        tsInfo = info;
+        callback?.(info);
+        return info;
+      });
+    },
+    async fetchTilesDebounced(receivedTiles, tileIds) {
+      const neededTileIds = tileIds.filter((tileId) => !tileCache.has(tileId));
+      if (neededTileIds.length > 0) {
+        const tiles = await dataFetcher.fetchTilesDebounced(() => {}, neededTileIds);
+        for (const [tileId, tile] of Object.entries(tiles)) {
+          assert(!isDividedTile(tile), "Found divided tile");
+          tileCache.set(tileId, tile);
+        }
+      }
+      /** @type {Record<string, Tile>} */
+      const tiles = {};
+      for (const tileId of tileIds) {
+        // @ts-expect-error - We know the tile is in the cache
+        tiles[tileId] = tileCache.get(tileId);
+      }
+      receivedTiles(tiles);
+      return tiles;
+    },
+    clearCache() {
+      tsInfo = undefined;
+      tileCache.clear();
+    }
   }
+}
+
+/**
+ * @param {{ name?: string }[]} fetchers
+ */
+function formatNames(fetchers) {
+  const series = fetchers.map(fetcher => fetcher.name ?? 'unnamed').join(', ');
+  let name = fetchers.length > 1 ? `stack(${series})` : series;
+  name = name.length > 100 ? `${name.slice(0, 100)}...` : name;
+  return name;
 }
 
 /** @implements {AbstractDataFetcher<Tile>} */
 export default class StackedDataFetcher {
-  /** @type {DataFetcher[]} */
+  /** @type {ReturnType<typeof cache>[]} */
   #fetchers;
 
   /**
@@ -73,11 +132,21 @@ export default class StackedDataFetcher {
   constructor({ type, children }, pubSub) {
     assert(type === "stacked");
     assert(Array.isArray(children));
-    this.#fetchers = children.map((c) => new DataFetcher(c, pubSub));
+    this.#fetchers = children.map((c) => cache(new DataFetcher(c, pubSub)));
   }
 
   get #currentFetcher() {
     return this.#fetchers[this.#cursor];
+  }
+
+  // increment the cursor and return the next fetcher, wrapping around
+  next() {
+    this.#cursor = (this.#cursor + 1) % this.#fetchers.length;
+  }
+
+  // increment the cursor and return the next fetcher, wrapping around
+  prev() {
+    this.#cursor = (this.#cursor - 1 + this.#fetchers.length) % this.#fetchers.length;
   }
 
   /** @param {import('../types').HandleTilesetInfoFinished} callback */
@@ -89,10 +158,8 @@ export default class StackedDataFetcher {
     );
     assertTilesetsAreStackable(infos);
     this.tilesetInfoLoading = false;
-    // TODO:
-    //   - Smarter way to combine tileset infos?
-    //   - Cache?
-    const combinedTilesetInfo = { ...infos[0], name: "Stacked Tileset" };
+    // TODO: Smarter way to combine tileset infos? Cache?
+    const combinedTilesetInfo = { ...infos[0], name: formatNames(this.#fetchers) };
     callback(combinedTilesetInfo);
     return combinedTilesetInfo;
   }
@@ -103,10 +170,7 @@ export default class StackedDataFetcher {
    * @returns {Promise<Record<string, Tile>>}
    */
   async fetchTilesDebounced(receivedTiles, tileIds) {
-    const tiles = await this.#currentFetcher.fetchTilesDebounced(() => {}, tileIds);
-    assertNoDividedTiles(tiles);
-    receivedTiles(tiles);
-    return tiles;
+    return this.#currentFetcher.fetchTilesDebounced(receivedTiles, tileIds);
   }
 
 }

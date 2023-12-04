@@ -49,6 +49,7 @@ import {
 // Styles
 import styles from '../styles/TiledPlot.module.scss'; // eslint-disable-line no-unused-vars
 import stylesCenterTrack from '../styles/CenterTrack.module.scss'; // eslint-disable-line no-unused-vars
+import clsx from 'clsx';
 
 class TiledPlot extends React.Component {
   constructor(props) {
@@ -2055,10 +2056,10 @@ class TiledPlot extends React.Component {
 
     let centerTrack = (
       <div
-        className={[
+        className={clsx(
           'center-track-container',
           stylesCenterTrack['center-track-container'],
-        ].join(' ')}
+        )}
         style={{
           left: this.leftWidth + this.props.paddingLeft,
           top: this.topHeight + this.props.paddingTop,
@@ -2072,10 +2073,10 @@ class TiledPlot extends React.Component {
     if (this.props.tracks.center.length) {
       centerTrack = (
         <div
-          className={[
+          className={clsx(
             'center-track-container',
             stylesCenterTrack['center-track-container'],
-          ].join(' ')}
+          )}
           style={{
             left: this.leftWidth + this.props.paddingLeft,
             top: this.topHeight + this.props.paddingTop,
