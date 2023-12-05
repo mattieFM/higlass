@@ -242,17 +242,17 @@ function handleStackedTilesetNavigation(renderer, event) {
     track instanceof HeatmapTiledPixiTrack &&
     dataFetcher instanceof StackedDataFetcher
   ) {
-    return false;
+    if (event.wheelDelta > 0) {
+      dataFetcher.previous();
+    } else {
+      dataFetcher.next();
+    }
+    track.removeTiles(Object.keys(track.fetchedTiles));
+    track.fetching.clear();
+    track.refreshTiles();
+    return true;
   }
-  if (event.wheelDelta > 0) {
-    dataFetcher.previous();
-  } else {
-    dataFetcher.next();
-  }
-  track.removeTiles(Object.keys(track.fetchedTiles));
-  track.fetching.clear();
-  track.refreshTiles();
-  return true;
+  return false;
 }
 
 /**

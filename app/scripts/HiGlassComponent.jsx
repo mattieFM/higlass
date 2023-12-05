@@ -85,6 +85,7 @@ import styles from '../styles/HiGlass.module.scss'; // eslint-disable-line no-un
 import stylesMTHeader from '../styles/ViewHeader.module.scss'; // eslint-disable-line no-unused-vars
 
 import '../styles/HiGlass.scss'; // eslint-disable-line no-unused-vars
+import HyperStackSelection from './HyperStackSelection';
 
 const NUM_GRID_COLUMNS = 12;
 const DEFAULT_NEW_VIEW_HEIGHT = 12;
@@ -891,9 +892,13 @@ class HiGlassComponent extends React.Component {
     }, TYPED_TEXT_TIMEOUT);
   }
 
+  /** @param {KeyboardEvent} event */
   keyDownHandler(event) {
     // handle typed commands (e.g. e-d-i-t)
     this.typedTextHandler(event);
+    if (event.key === 'Alt') {
+      this.pubSub.publish('app.altKeyDown');
+    }
 
     if (this.props.options.rangeSelectionOnAlt && event.key === 'Alt') {
       this.setState({
@@ -903,6 +908,9 @@ class HiGlassComponent extends React.Component {
   }
 
   keyUpHandler(event) {
+    if (event.key === 'Alt') {
+      this.pubSub.publish('app.altKeyUp');
+    }
     if (this.props.options.rangeSelectionOnAlt && event.key === 'Alt') {
       this.setState({
         mouseTool: MOUSE_TOOL_MOVE,
@@ -5353,6 +5361,16 @@ class HiGlassComponent extends React.Component {
                   )}
                 >
                   {gridLayout}
+                  <div
+                    style={{
+                      position: "fixed",
+                      left: "50%",
+                      bottom: "1px",
+                      transform: "translateX(-50%)",
+                    }}
+                  >
+                    <HyperStackSelection pubSub={this.pubSub} />
+                  </div>
                 </div>
                 <svg
                   ref={(c) => {
