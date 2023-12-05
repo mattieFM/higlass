@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import { zoom, zoomIdentity } from 'd3-zoom';
 import { select, pointer } from 'd3-selection';
 import { scaleLinear } from 'd3-scale';
-import { debounce } from 'lodash';
 import slugid from 'slugid';
 import clsx from 'clsx';
 
@@ -63,6 +62,7 @@ import SVGTrack from './SVGTrack';
 // Higher-order components
 import withPubSub from './hocs/with-pub-sub';
 import withTheme from './hocs/with-theme';
+import { withHyperstackSelection } from './hocs/with-hyperstack-selection';
 
 // Utils
 import {
@@ -221,41 +221,6 @@ const SCROLL_TIMEOUT = 100;
  */
 
 /**
- * Temporarily keep this logic here until we can move it outside of this component.
- *
- * @param {TrackRenderer} renderer
- * @param {import('d3-zoom').D3ZoomEvent<HTMLElement, unknown> & { wheelDelta: number }} event
- *
- * @returns {boolean} Whether the event was handled.
- */
-function handleStackedTilesetNavigation(renderer, event) {
-  const tracks = renderer.getTracksAtPosition(
-    ...pointer(event, renderer.props.canvasElement),
-  );
-  /** @type {HeatmapTiledPixiTrack} */
-  // @ts-expect-error
-  const track = tracks.at(0);
-  /** @type {StackedDataFetcher} */
-  const dataFetcher = track.dataFetcher;
-  if (
-    tracks.length !== 1 &&
-    track instanceof HeatmapTiledPixiTrack &&
-    dataFetcher instanceof StackedDataFetcher
-  ) {
-    if (event.wheelDelta > 0) {
-      dataFetcher.previous();
-    } else {
-      dataFetcher.next();
-    }
-    track.removeTiles(Object.keys(track.fetchedTiles));
-    track.fetching.clear();
-    track.refreshTiles();
-    return true;
-  }
-  return false;
-}
-
-/**
  * @extends {React.Component<TrackRendererProps>}
  */
 class TrackRenderer extends React.Component {
@@ -353,8 +318,11 @@ class TrackRenderer extends React.Component {
           // Don't zoom if the shift key is held down.
           // We probably want to pick a different key since shift is used
           // for "value scale zooming" (whatever that is).
-          if (event.shiftKey) {
-            return !handleStackedTilesetNavigation(this, event);
+          if (this.props.hyperstackSelection.enabled) {
+            this.props.pubSub.publish('hyperstack.scroll', {
+              direction: event.wheelDelta > 0 ? 'previous' : 'next',
+            });
+            return false;
           }
           return true;
         })
@@ -2433,4 +2401,4 @@ TrackRenderer.propTypes = {
   zoomLimits: PropTypes.array,
 };
 
-export default withPubSub(withTheme(TrackRenderer));
+export default withHyperstackSelection(withPubSub(withTheme(TrackRenderer)));

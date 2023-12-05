@@ -49,7 +49,7 @@ function assertTilesetsAreStackable(infos) {
 /**
  * @param {DataFetcher} dataFetcher
  * @param {{ maxSize?: number }} options
- * @returns {AbstractDataFetcher<Tile> & { clearCache: () => void, name?: string }}
+ * @returns {AbstractDataFetcher<Tile> & { clearCache: () => void, label?: string }}
  */
 function cache(dataFetcher, { maxSize = 100 } = {}) {
   /** @type {TilesetInfo | undefined} */
@@ -59,9 +59,9 @@ function cache(dataFetcher, { maxSize = 100 } = {}) {
   const tileCache = new QuickLRU({ maxSize });
 
   return {
-    get name() {
+    get label() {
       // @ts-expect-error - We know the dataConfig is set
-      return dataFetcher.dataConfig.name;
+      return dataFetcher.dataConfig.label;
     },
     async tilesetInfo(callback) {
       if (tsInfo) {
@@ -106,11 +106,11 @@ function cache(dataFetcher, { maxSize = 100 } = {}) {
 }
 
 /**
- * @param {{ name?: string }[]} fetchers
+ * @param {{ label?: string }[]} fetchers
  */
 function formatNames(fetchers) {
   const series = fetchers
-    .map((fetcher) => fetcher.name ?? 'unnamed')
+    .map((fetcher) => fetcher.label ?? 'unnamed')
     .join(', ');
   let name = fetchers.length > 1 ? `stack(${series})` : series;
   name = name.length > 100 ? `${name.slice(0, 100)}...` : name;
@@ -126,7 +126,7 @@ export default class StackedDataFetcher {
    * Index of the current fetcher.
    * @type {number}
    */
-  #cursor = 0;
+  cursor = 0;
 
   /** @type {boolean} */
   tilesetInfoLoading = true;
@@ -145,18 +145,7 @@ export default class StackedDataFetcher {
   }
 
   get current() {
-    return this.#fetchers[this.#cursor];
-  }
-
-  // increment the cursor and return the next fetcher, wrapping around
-  next() {
-    this.#cursor = (this.#cursor + 1) % this.#fetchers.length;
-  }
-
-  // increment the cursor and return the next fetcher, wrapping around
-  previous() {
-    this.#cursor =
-      (this.#cursor - 1 + this.#fetchers.length) % this.#fetchers.length;
+    return this.#fetchers[this.cursor];
   }
 
   /** @param {import('../types').HandleTilesetInfoFinished} callback */

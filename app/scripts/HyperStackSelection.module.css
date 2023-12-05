@@ -1,29 +1,78 @@
+@keyframes slideInFromBottom {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 .hyperstack {
   font-family: sans-serif;
-}
-
-.timeline {
   display: flex;
-  background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white */
-  padding: 10px 20px;
-  border-radius: 5px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.7);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 5px 10px;
+  border-radius: 5px;
+  --primary-color: #333;
+  animation: slideInFromBottom 0.1s ease-out forwards;
 }
 
-.timeline-labels {
+.timeline-line {
+    background-color: var(--primary-color);
+    position: relative;
+    height: 4px;
+    width: 100%;
+    top: 20px;
+    border-radius: 2px;
+    margin: 0 30px;
+    pointer-events: none;
+}
+
+.timeline-points {
   display: flex;
-  padding: 10px 20px;
 }
 
 .timepoint {
   display: flex;
-  flex-direction: column;
   align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+  background-color: transparent;
+  border-radius: 10px;
 }
 
-.dot {
-  height: 10px;
-  width: 10px;
-  background-color: black;
-  border-radius: 50%;
+.timepoint:focus {
+  outline: none;
 }
+
+.timepoint[data-state='on'] {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.timepoint:hover {
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+}
+
+.timepoint-label {
+  position: absolute;
+  bottom: 150%;
+  left: 24.5px;
+  transform: translateX(-50%);
+
+  background-color: var(--primary-color);
+  color: white;
+  padding: 5px;
+  border-radius: 3px;
+  white-space: nowrap;
+  text-align: center;
+  font-size: 14px;
+  white-space: nowrap;
+}
+

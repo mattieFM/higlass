@@ -28,6 +28,7 @@ import createApi from './api';
 import { Provider as PubSubProvider } from './hocs/with-pub-sub';
 import { Provider as ModalProvider } from './hocs/with-modal';
 import { Provider as ThemeProvider } from './hocs/with-theme';
+import { HyperstackSelectionContext } from './hocs/with-hyperstack-selection';
 
 // Services
 import {
@@ -207,6 +208,9 @@ class HiGlassComponent extends React.Component {
     this.unsetOnLocationChange = [];
 
     this.setTheme(props.options.theme, props.options.isDarkTheme);
+
+    /** @type {{ enabled: boolean } */
+    this.hyperstackSelection = { enabled: false };
 
     this.viewconfLoaded = false;
 
@@ -5327,71 +5331,80 @@ class HiGlassComponent extends React.Component {
         onMouseLeave={this.onMouseLeaveHandlerBound}
         onMouseMove={this.mouseMoveHandlerBound}
       >
-        <PubSubProvider value={this.pubSub}>
-          <ModalProvider value={this.modal}>
-            <ThemeProvider value={this.theme}>
-              {this.state.modal}
-              <canvas
-                key={this.uid}
-                ref={(c) => {
-                  this.canvasElement = c;
-                }}
-                onClick={this.canvasClickHandlerBound}
-                className={styles['higlass-canvas']}
-              />
-              <div
-                ref={(c) => {
-                  this.scrollContainer = c;
-                }}
-                className={clsx('higlass-scroll-container', {
-                  'higlass-scroll-container-overflow':
-                    this.props.options.sizeMode === SIZE_MODE_OVERFLOW,
-                  'higlass-scroll-container-scroll':
-                    this.props.options.sizeMode === SIZE_MODE_SCROLL,
-                })}
-                onScroll={this.onScrollHandlerBound}
-              >
+        <HyperstackSelectionContext.Provider value={this.hyperstackSelection}>
+          <PubSubProvider value={this.pubSub}>
+            <ModalProvider value={this.modal}>
+              <ThemeProvider value={this.theme}>
+                {this.state.modal}
+                <canvas
+                  key={this.uid}
+                  ref={(c) => {
+                    this.canvasElement = c;
+                  }}
+                  onClick={this.canvasClickHandlerBound}
+                  className={styles['higlass-canvas']}
+                />
                 <div
                   ref={(c) => {
-                    this.divDrawingSurface = c;
+                    this.scrollContainer = c;
                   }}
-                  className={clsx(
-                    'higlass-drawing-surface',
-                    styles['higlass-drawing-surface'],
-                  )}
+                  className={clsx('higlass-scroll-container', {
+                    'higlass-scroll-container-overflow':
+                      this.props.options.sizeMode === SIZE_MODE_OVERFLOW,
+                    'higlass-scroll-container-scroll':
+                      this.props.options.sizeMode === SIZE_MODE_SCROLL,
+                  })}
+                  onScroll={this.onScrollHandlerBound}
                 >
-                  {gridLayout}
                   <div
-                    style={{
-                      position: "fixed",
-                      left: "50%",
-                      bottom: "1px",
-                      transform: "translateX(-50%)",
+                    ref={(c) => {
+                      this.divDrawingSurface = c;
                     }}
+                    className={clsx(
+                      'higlass-drawing-surface',
+                      styles['higlass-drawing-surface'],
+                    )}
                   >
-                    <HyperStackSelection pubSub={this.pubSub} />
+                    {gridLayout}
+                    <HyperstackSelectionContext.Provider
+                      value={this.hyperstackSelection}
+                    >
+                      <div
+                        style={{
+                          position: 'fixed',
+                          left: '50%',
+                          bottom: '40px',
+                          transform: 'translateX(-50%)',
+                        }}
+                      >
+                        <HyperStackSelection
+                          tiledPlots={this.tiledPlots}
+                          pubSub={this.pubSub}
+                        />
+                      </div>
+                    </HyperstackSelectionContext.Provider>
                   </div>
+                  <svg
+                    ref={(c) => {
+                      this.svgElement = c;
+                    }}
+                    className={styles['higlass-svg']}
+                    style={{
+                      // inline the styles so they aren't overriden by other css
+                      // on the web page
+                      position: 'absolute',
+                      width: '100%',
+                      height: '100%',
+                      left: 0,
+                      top: 0,
+                      pointerEvents: 'none',
+                    }}
+                  />
                 </div>
-                <svg
-                  ref={(c) => {
-                    this.svgElement = c;
-                  }}
-                  className={styles['higlass-svg']}
-                  style={{
-                    // inline the styles so they aren't overriden by other css
-                    // on the web page
-                    position: 'absolute',
-                    width: '100%',
-                    height: '100%',
-                    left: 0,
-                    top: 0,
-                    pointerEvents: 'none',
-                  }}
-                />
-              </div>
-            </ThemeProvider>
-          </ModalProvider>
-        </PubSubProvider>
+              </ThemeProvider>
+            </ModalProvider>
+          </PubSubProvider>
+        </HyperstackSelectionContext.Provider>
       </div>
     );
   }
