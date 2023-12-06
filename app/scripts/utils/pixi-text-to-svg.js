@@ -18,7 +18,7 @@ export const pixiTextToSvg = (pixiText) => {
   }
 
   // @ts-expect-error Where this function is invoked in HorizontalChromosomeLabels, pixiText.style.fontFamily is always a string
-  t.setAttribute('font-family', pixiText.style.fontFamily); 
+  t.setAttribute('font-family', pixiText.style.fontFamily);
   // @ts-expect-error Where this function is invoked in HorizontalChromosomeLabels, pixiText.style.fontSize is always a string
   t.setAttribute('font-size', pixiText.style.fontSize);
   g.setAttribute('transform', `scale(${pixiText.scale.x},1)`);

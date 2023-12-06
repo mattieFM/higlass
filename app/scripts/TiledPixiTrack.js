@@ -725,7 +725,7 @@ class TiledPixiTrack extends PixiTrack {
      */
 
     // see if the data is already cached
-    // @ts-expect-error this.lruCache exists in classes that extend this one 
+    // @ts-expect-error this.lruCache exists in classes that extend this one
     let loadedTileData = this.lruCache.get(tile.tileId);
 
     // if not, load it and put it in the cache
@@ -780,7 +780,7 @@ class TiledPixiTrack extends PixiTrack {
           Object.keys(tileData)
             .filter((key) => Number.isNaN(+key))
             .forEach((key) => {
-              // @ts-expect-error Since tileData is an array, the properties have to be copied over manually 
+              // @ts-expect-error Since tileData is an array, the properties have to be copied over manually
               this.fetchedTiles[tileId].tileData[key] = tileData[key];
             });
         } else {
@@ -923,8 +923,8 @@ class TiledPixiTrack extends PixiTrack {
 
     // Get all of the dense values in the currently visible tiles
     /** @type {number[]} */
-    let values = []
-    
+    let values = [];
+
     values = values
       .concat(
         ...visibleAndFetchedIds
@@ -939,7 +939,7 @@ class TiledPixiTrack extends PixiTrack {
 
   allVisibleValues() {
     /** @type {number[]} */
-    const values = []
+    const values = [];
 
     return values.concat(
       ...this.visibleAndFetchedIds().map((x) =>

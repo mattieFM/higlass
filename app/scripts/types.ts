@@ -102,7 +102,7 @@ export type TilesetInfoShared = {
   tile_size?: number;
   max_tile_width?: number;
   transforms?: { name: string; value: string }[];
-  chromsizes?: ArrayLike<ChromsizeRow>
+  chromsizes?: ArrayLike<ChromsizeRow>;
   error?: string;
 };
 
@@ -128,9 +128,9 @@ export type DataConfig = {
   slicePos?: number;
 };
 
-export type HandleTilesetInfoFinished = { 
-  (info: TilesetInfo | null | { error: string }, tilesetUid?: string): void; 
-}; 
+export type HandleTilesetInfoFinished = {
+  (info: TilesetInfo | null | { error: string }, tilesetUid?: string): void;
+};
 
 export interface AbstractDataFetcher<TileType, DataConfig> {
   tilesetInfo(
@@ -140,5 +140,5 @@ export interface AbstractDataFetcher<TileType, DataConfig> {
     receivedTiles: (tiles: Record<string, TileType>) => void,
     tileIds: string[],
   ): Promise<Record<string, TileType>>;
-  dataConfig: DataConfig
+  dataConfig: DataConfig;
 }
