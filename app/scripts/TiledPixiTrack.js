@@ -13,7 +13,7 @@ import backgroundTaskScheduler from './utils/background-task-scheduler';
 
 // Configs
 import { GLOBALS, ZOOM_DEBOUNCE } from './configs';
-import { isResolutionsTilesetInfo } from './utils/type-guards';
+import { isResolutionsTilesetInfo, isTileSetInfo } from './utils/type-guards';
 
 /**
  * Get a valueScale for a heatmap.
@@ -71,6 +71,11 @@ export function getValueScale(
  */
 
 /**
+ * An alternative to Tile. Perhaps the worst data type. An array of numbers with some extra properties.
+ * @typedef {Array<number> & Pick<Tile, 'mirrored' | 'tilePositionId'>} TilePositionArrayObject
+ */
+
+/**
  * @typedef Tile
  * @property {string} tileId
  * @property {TileData} tileData
@@ -86,21 +91,9 @@ export function getValueScale(
  * @property {number} zoomLevel
  * @property {Array<number>} tilePos
  * @property {string} error
- * @property {Array<unknown>} dense
+ * @property {Float32Array} dense
  * @property {number} minNonZero
  * @property {number} maxNonZero
- */
-
-/**
- * @typedef TiledPixiTrackOptions
- * @property {string} labelPosition - If the label is to be drawn, where should it be drawn?
- * @property {string} labelText - What should be drawn in the label.
- * @property {number} maxZoom
- * @property {string} name
- */
-/**
- * @template T
- * @typedef {T & TiledPixiTrackOptions} ExtendedTiledPixiTrackOptions
  */
 
 /**
@@ -119,6 +112,21 @@ export function getValueScale(
  */
 
 /**
+ * @typedef TiledPixiTrackOptions
+ * @property {string} labelPosition - If the label is to be drawn, where should it be drawn?
+ * @property {string} labelText - What should be drawn in the label.
+ * @property {number} maxZoom
+ * @property {string} name
+ */
+
+/**
+ * @template T
+ * @typedef {T & TiledPixiTrackOptions} ExtendedTiledPixiTrackOptions
+ */
+
+/**
+ * The TiledPixiTrack requires an options parameter, which should be an object containing properties specified in
+ * TiledPixiTrackOptions. It is capable of accepting any property defined in any of its superclasses.
  * @template {ExtendedTiledPixiTrackOptions<{[key: string]: any}>} Options
  * @extends {PixiTrack<Options>}
  * */
@@ -147,7 +155,7 @@ class TiledPixiTrack extends PixiTrack {
     this.renderVersion = 1;
 
     // the tiles which should be visible (although they're not necessarily fetched)
-    /** @type {Array<Tile>} */
+    /** @type {Array<Pick<Tile, 'tileId' |'remoteId' | 'mirrored'>>} */
     this.visibleTiles = [];
     /** @type {Set<string>} */
     this.visibleTileIds = new Set();
@@ -195,13 +203,13 @@ class TiledPixiTrack extends PixiTrack {
     this.prevValueScale = null;
 
     if (!context.dataFetcher) {
-      // @ts-expect-error this.pubsub gets set to a defined default in Track so it will never be undefined here
       this.dataFetcher = new DataFetcher(dataConfig, this.pubSub);
     } else {
       this.dataFetcher = context.dataFetcher;
     }
 
     // To indicate that this track is requiring a tileset info
+    /** @type {TilesetInfo} */
     this.tilesetInfo = undefined;
     this.uuid = slugid.nice();
 
@@ -225,7 +233,23 @@ class TiledPixiTrack extends PixiTrack {
     this.dataFetcher.tilesetInfo((tilesetInfo, tilesetUid) => {
       if (!tilesetInfo) return;
 
-      this.tilesetInfo = tilesetInfo;
+      if (isTileSetInfo(tilesetInfo)) {
+        this.tilesetInfo = tilesetInfo;
+      } else {
+        // no tileset info for this track
+        console.warn(
+          'Error retrieving tilesetInfo:',
+          dataConfig,
+          tilesetInfo.error,
+        );
+
+        this.setError(tilesetInfo.error);
+        // Fritz: Not sure why it's reset
+        // this.trackNotFoundText = '';
+        this.tilesetInfo = undefined;
+        return;
+      }
+
       // If the dataConfig contained a fileUrl, then
       // we need to update the tilesetUid based
       // on the registration of the fileUrl.
@@ -238,21 +262,6 @@ class TiledPixiTrack extends PixiTrack {
 
       if (this.tilesetInfo && this.tilesetInfo.chromsizes) {
         this.chromInfo = parseChromsizesRows(this.tilesetInfo.chromsizes);
-      }
-
-      if (this.tilesetInfo.error) {
-        // no tileset info for this track
-        console.warn(
-          'Error retrieving tilesetInfo:',
-          dataConfig,
-          this.tilesetInfo.error,
-        );
-
-        this.setError(this.tilesetInfo.error);
-        // Fritz: Not sure why it's reset
-        // this.trackNotFoundText = '';
-        this.tilesetInfo = undefined;
-        return;
       }
 
       if (isResolutionsTilesetInfo(this.tilesetInfo)) {
@@ -359,7 +368,7 @@ class TiledPixiTrack extends PixiTrack {
     this.listeners[event].splice(id, 1);
   }
 
- /** @param {Options} options */
+  /** @param {Options} options */
   rerender(options) {
     super.rerender(options);
 
@@ -402,7 +411,7 @@ class TiledPixiTrack extends PixiTrack {
   /**
    * Set which tiles are visible right now.
    *
-   * @param {Array<Object.<string, unknown>>} tilePositions
+   * @param {Array<TilePositionArrayObject>} tilePositions
    */
   setVisibleTiles(tilePositions) {
     this.visibleTiles = tilePositions.map((x) => ({
@@ -515,15 +524,15 @@ class TiledPixiTrack extends PixiTrack {
     this.draw();
   }
 
-  /** 
-   * @param {import('./types').Scale} newXScale 
+  /**
+   * @param {import('./types').Scale} newXScale
    * @param {import('./types').Scale} newYScale
    */
   zoomed(newXScale, newYScale, k = 1, tx = 0, ty = 0) {
     this.xScale(newXScale);
     this.yScale(newYScale);
 
-    // @ts-expect-error Not sure why this is called without an argument 
+    // @ts-expect-error Not sure why this is called without an argument
     this.refreshTilesDebounced();
 
     this.pMobile.position.x = tx;
@@ -697,11 +706,11 @@ class TiledPixiTrack extends PixiTrack {
    */
 
   /**
-   * 
+   *
    * @param {TiledAreaTile} tile A tile returned by a TiledArea.
    * @param {function} dataLoader A function for extracting drawable data from a tile. This
    * usually means differentiating the between dense and sparse tiles and putting the data into an array.
-   * @returns 
+   * @returns
    */
   loadTileData(tile, dataLoader) {
     /**
@@ -714,20 +723,20 @@ class TiledPixiTrack extends PixiTrack {
      */
 
     // see if the data is already cached
-    // @ts-expect-error This isn't defined anywhere 
+    // @ts-expect-error this.lruCache exists in classes that extend this one 
     let loadedTileData = this.lruCache.get(tile.tileId);
 
     // if not, load it and put it in the cache
     if (!loadedTileData) {
       loadedTileData = dataLoader(tile.data, tile.type);
-      // @ts-expect-error This isn't defined anywhere 
+      // @ts-expect-error this.lruCache exists in classes that extend this one
       this.lruCache.put(tile.tileId, loadedTileData);
     }
 
     return loadedTileData;
   }
 
-  /** @param {Array<Tile>} toFetch */
+  /** @param {Pick<Tile,'remoteId'>[]} toFetch */
   fetchNewTiles(toFetch) {
     if (toFetch.length > 0) {
       const toFetchList = [...new Set(toFetch.map((x) => x.remoteId))];
@@ -743,7 +752,7 @@ class TiledPixiTrack extends PixiTrack {
    * We've gotten a bunch of tiles from the server in
    * response to a request from fetchTiles.
    */
-  /** @param {Object<string, unknown>} loadedTiles */
+  /** @param {Object<string, import('./data-fetchers/DataFetcher').DividedTile | Tile | TilePositionArrayObject>} loadedTiles */
   receivedTiles(loadedTiles) {
     for (let i = 0; i < this.visibleTiles.length; i++) {
       const { tileId } = this.visibleTiles[i];
@@ -753,6 +762,7 @@ class TiledPixiTrack extends PixiTrack {
       if (this.visibleTiles[i].remoteId in loadedTiles) {
         if (!(tileId in this.fetchedTiles)) {
           // this tile may have graphics associated with it
+          // @ts-expect-error more properties will be added to this.fetchedTiles[tileId] later (such as by synchronizeTilesAndGraphics())
           this.fetchedTiles[tileId] = this.visibleTiles[i];
         }
 
@@ -762,15 +772,17 @@ class TiledPixiTrack extends PixiTrack {
         // object but an object array...
         if (Array.isArray(loadedTiles[this.visibleTiles[i].remoteId])) {
           const tileData = loadedTiles[this.visibleTiles[i].remoteId];
+          // @ts-expect-error this.fetchedTiles[tileId].tileData will get more defined in the next lines
           this.fetchedTiles[tileId].tileData = [...tileData];
           // Fritz: this is sooo hacky... we should really not use object arrays
           Object.keys(tileData)
             .filter((key) => Number.isNaN(+key))
             .forEach((key) => {
+              // @ts-expect-error Since tileData is an array, the properties have to be copied over manually 
               this.fetchedTiles[tileId].tileData[key] = tileData[key];
             });
         } else {
-          // @ts-ignore typescript can't infer that this is a Tile
+          // @ts-expect-error The object doesn't at this point have all of the properties that it will have later
           this.fetchedTiles[tileId].tileData = {
             ...loadedTiles[this.visibleTiles[i].remoteId],
           };
@@ -809,15 +821,15 @@ class TiledPixiTrack extends PixiTrack {
 
     // Let HiGlass know we need to re-render
     // check if the value scale has changed
-    // @ts-expect-error This is defined by classes which extend this one 
+    // @ts-expect-error This is defined by classes which extend this one
     if (this.valueScale) {
       if (
         !this.prevValueScale ||
-        // @ts-expect-error This is defined by classes which extend this one 
+        // @ts-expect-error This is defined by classes which extend this one
         JSON.stringify(this.valueScale.domain()) !==
           JSON.stringify(this.prevValueScale.domain())
       ) {
-        // @ts-expect-error This is defined by classes which extend this one 
+        // @ts-expect-error This is defined by classes which extend this one
         this.prevValueScale = this.valueScale.copy();
 
         if (this.onValueScaleChanged) {
@@ -892,7 +904,7 @@ class TiledPixiTrack extends PixiTrack {
 
   /**
    * Draw a tile on some graphics
-   * @param {Tile} tile 
+   * @param {Tile} tile
    */
   drawTile(tile) {}
 
@@ -907,7 +919,11 @@ class TiledPixiTrack extends PixiTrack {
       visibleAndFetchedIds = Object.keys(this.fetchedTiles);
     }
 
-    const values = []
+    // Get all of the dense values in the currently visible tiles
+    /** @type {number[]} */
+    let values = []
+    
+    values = values
       .concat(
         ...visibleAndFetchedIds
           .filter((x) => this.fetchedTiles[x].tileData.dense)
@@ -920,7 +936,10 @@ class TiledPixiTrack extends PixiTrack {
   }
 
   allVisibleValues() {
-    return [].concat(
+    /** @type {number[]} */
+    const values = []
+
+    return values.concat(
       ...this.visibleAndFetchedIds().map((x) =>
         Array.from(this.fetchedTiles[x].tileData.dense),
       ),
@@ -997,7 +1016,7 @@ class TiledPixiTrack extends PixiTrack {
    * @param {number} inMargin A number of pixels to be left free on the top and bottom
    *    of the track. For example if the glyphs have a certain
    *    width and we want all of them to fit into the space
-   * @returns 
+   * @returns
    */
   makeValueScale(minValue, medianValue, maxValue, inMargin) {
     /*
