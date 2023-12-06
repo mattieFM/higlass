@@ -212,7 +212,8 @@ class TiledPixiTrack extends PixiTrack {
 
     // To indicate that this track is requiring a tileset info
     /** @type {TilesetInfo} */
-    this.tilesetInfo = undefined;
+    // @ts-expect-error This has to be initialized to null
+    this.tilesetInfo = null;
     this.uuid = slugid.nice();
 
     // this needs to be above the tilesetInfo() call because if that
