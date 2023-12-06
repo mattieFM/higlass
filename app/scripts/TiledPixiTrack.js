@@ -194,6 +194,8 @@ class TiledPixiTrack extends PixiTrack {
     /** @type {Object.<string, Array<Function>>} */
     this.listeners = {};
 
+    /** @type {import('pub-sub-es').PubSub & { __fake__?: boolean }} */
+    // @ts-expect-error This is always defined in Track.js
     this.pubSub = pubSub;
     this.animate = animate;
     this.onValueScaleChanged = onValueScaleChanged;
