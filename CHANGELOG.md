@@ -1,5 +1,9 @@
 # Release notes
 
+## v1.13.3
+
+- Inject HiGlass CSS via JS, removing the need to include `hglib.css` in HTML templates.
+
 ## v1.13.2
 
 - Add entrypoint for importing from `higlass/dist/*` with bundlers
