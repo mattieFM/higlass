@@ -901,7 +901,7 @@ class HiGlassComponent extends React.Component {
     // handle typed commands (e.g. e-d-i-t)
     this.typedTextHandler(event);
     if (event.key === 'Alt') {
-      this.pubSub.publish('app.altKeyDown');
+      this.pubSub.publish('hyperstack.open');
     }
 
     if (this.props.options.rangeSelectionOnAlt && event.key === 'Alt') {
@@ -913,7 +913,7 @@ class HiGlassComponent extends React.Component {
 
   keyUpHandler(event) {
     if (event.key === 'Alt') {
-      this.pubSub.publish('app.altKeyUp');
+      this.pubSub.publish('hyperstack.close');
     }
     if (this.props.options.rangeSelectionOnAlt && event.key === 'Alt') {
       this.setState({

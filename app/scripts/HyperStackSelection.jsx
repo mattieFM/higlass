@@ -48,19 +48,20 @@ function useHyperstackTrack(pubSub, tiledPlots) {
   const [track, setTrack] = React.useState(null);
   React.useEffect(() => {
     const tokens = [
-      pubSub.subscribe('app.altKeyDown', () => {
+      pubSub.subscribe('hyperstack.open', () => {
         if (Object.keys(tiledPlots).length !== 1) {
           // Only one tiled plot is supported
           return;
         }
         const { trackRenderer } = Object.values(tiledPlots)[0];
-        if (Object.keys(trackRenderer.trackDefObjects).length !== 1) {
-          // Only one track is supported
+        const trackDefObject = Object.values(
+          trackRenderer.trackDefObjects,
+        ).find((obj) => obj.trackObject instanceof HeatmapTiledPixiTrack);
+        if (!trackDefObject) {
+          // Only heatmap tracks are supported
           return;
         }
-        const { trackObject, trackDef } = Object.values(
-          trackRenderer.trackDefObjects,
-        )[0];
+        const { trackObject, trackDef } = trackDefObject;
         if (
           trackObject instanceof HeatmapTiledPixiTrack &&
           trackObject.dataFetcher instanceof StackedDataFetcher
@@ -79,7 +80,7 @@ function useHyperstackTrack(pubSub, tiledPlots) {
         }
         context.enabled = true;
       }),
-      pubSub.subscribe('app.altKeyUp', () => {
+      pubSub.subscribe('hyperstack.close', () => {
         context.enabled = false;
         setTrack(null);
       }),
@@ -113,6 +114,8 @@ export default function HyperStackSelection(props) {
   const maxWidth = 250;
   const totalDistance = stack.reduce((acc, item) => acc + (item.step ?? 0), 0);
   const scale = scaleLinear().domain([0, totalDistance]).range([0, maxWidth]);
+
+  window.pubSub = props.pubSub;
 
   React.useEffect(() => {
     if (track) {
