@@ -1,5 +1,6 @@
 import QuickLRU from 'quick-lru';
 import DataFetcher, { isDividedTile } from './DataFetcher';
+import { isObject } from '../utils/type-guards';
 
 /** @typedef {import('./DataFetcher').Tile} Tile */
 /** @typedef {import('../types').DataConfig} DataConfig */
@@ -122,6 +123,9 @@ export default class StackedDataFetcher {
   /** @type {ReturnType<typeof cache>[]} */
   #fetchers;
 
+  /** @type {undefined | string} */
+  #name;
+
   /**
    * Index of the current fetcher.
    * @type {number}
@@ -138,10 +142,14 @@ export default class StackedDataFetcher {
    * @param {import('../types').DataConfig} dataConfig
    * @param {import('pub-sub-es').PubSub} pubSub
    */
-  constructor({ type, children }, pubSub) {
+  constructor({ type, children, options }, pubSub) {
     assert(type === 'stacked');
     assert(Array.isArray(children));
     this.#fetchers = children.map((c) => cache(new DataFetcher(c, pubSub)));
+    this.#name =
+      isObject(options) && 'name' in options && typeof options.name === 'string'
+        ? options.name
+        : undefined;
   }
 
   get current() {
@@ -163,7 +171,7 @@ export default class StackedDataFetcher {
     // TODO: Smarter way to combine tileset infos? Cache?
     const combinedTilesetInfo = {
       ...infos[0],
-      name: formatNames(this.#fetchers),
+      name: this.#name ?? formatNames(this.#fetchers),
     };
     callback(combinedTilesetInfo);
     return combinedTilesetInfo;
