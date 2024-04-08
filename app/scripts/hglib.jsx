@@ -35,10 +35,7 @@ export {
 } from './test-helpers';
 
 export { getTrackObjectFromHGC } from './utils';
-
-export { version } from '../../package.json';
-
-const launch = (element, config, options) => {
+const launch = async (element, config, options) => {
   /**
    * The instance's public API will be passed into the callback
    *
@@ -54,12 +51,17 @@ const launch = (element, config, options) => {
    * @return  {Object} The instance's public API
    */
   const ref = React.createRef();
-  const domNode = document.getElementById('demo');
+ 
+  const domNode = element
   const root = createRoot(domNode);
   root.render(
     <HiGlassComponent ref={ref} options={options || {}} viewConfig={config} />
   );
-  return ref.current;
+  let temp = ref.current
+  
+  setTimeout(() => {
+    return ref.current;
+  }, 1500);
 };
 
 /**
@@ -107,13 +109,14 @@ const launch = (element, config, options) => {
  *
  * @return  {Object}  Newly created HiGlass component.
  */
-export const viewer = (element, viewConfig, options) => {
+export const viewer = async (element, viewConfig, options) => {
   /**
    * Available options:
    *
    *  bounded: [true/false]
    *      Fit the container to the bounds of the element
    */
-  const hg = launch(element, viewConfig, options);
+  const hg = await launch(element, viewConfig, options);
+  console.log(hg)
   return hg.api;
 };

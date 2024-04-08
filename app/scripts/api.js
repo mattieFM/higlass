@@ -11,8 +11,6 @@ import { getTrackObjectFromHGC } from './utils';
 
 import { MOUSE_TOOL_MOVE, MOUSE_TOOL_SELECT } from './configs';
 
-import { version } from '../../package.json';
-
 const forceUpdate = (self) => {
   self.setState(self.state);
 };
@@ -39,13 +37,6 @@ const createApi = function api(context, pubSub) {
     stack: apiPubSub.stack,
     // Public API
     public: {
-      /**
-       * HiGlass version
-       * @return {string} Version number
-       */
-      get version() {
-        return version;
-      },
 
       /**
        * Enable or disable broadcasting the mouse position globally

@@ -53,7 +53,7 @@ fetchTilesPool.run(function(params, done) {
 }, [workerPath]);
 */
 
-const sessionId = import.meta.env.DEV ? 'dev' : slugid.nice();
+const sessionId = slugid.nice();
 export let requestsInFlight = 0; // eslint-disable-line import/no-mutable-exports
 export let authHeader = null; // eslint-disable-line import/no-mutable-exports
 

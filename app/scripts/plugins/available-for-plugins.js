@@ -93,8 +93,6 @@ import {
 } from '../data-fetchers';
 import getDataFetcher from './get-data-fetcher';
 
-import { version } from '../../../package.json';
-
 // Utils
 import * as utils from '../utils';
 
@@ -209,5 +207,4 @@ export default {
   services,
   utils,
   configs,
-  VERSION: version,
 };
