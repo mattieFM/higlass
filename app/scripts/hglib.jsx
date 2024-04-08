@@ -2,6 +2,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import HiGlassComponent from './HiGlassComponent';
+import { createRoot } from 'react-dom/client';
+
 
 // these exports can be used to create new tracks in outside
 // environments (e.g. Observable)
@@ -52,9 +54,10 @@ const launch = (element, config, options) => {
    * @return  {Object} The instance's public API
    */
   const ref = React.createRef();
-  ReactDOM.render(
-    <HiGlassComponent ref={ref} options={options || {}} viewConfig={config} />,
-    element,
+  const domNode = document.getElementById('demo');
+  const root = createRoot(domNode);
+  root.render(
+    <HiGlassComponent ref={ref} options={options || {}} viewConfig={config} />
   );
   return ref.current;
 };
