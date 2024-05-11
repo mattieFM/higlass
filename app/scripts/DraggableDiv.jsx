@@ -80,14 +80,18 @@ class DraggableDiv extends React.Component {
 
   dragBottomFunc(event) {
     const ms = pointer(event, this.domBody);
+    console.log(`ms pointer bottom: ${ms}`);
 
     let newHeight = this.dragStartHeight + (ms[1] - this.dragStartMousePos[1]);
+    console.log(`new hieght: ${newHeight}`);
     newHeight = newHeight > this.minHeight ? newHeight : this.minHeight;
 
-    this.setState({ height: newHeight });
+    this.setState({ height: newHeight }, ()=>{
+      event.sourceEvent.stopPropagation();
+      this.sizeChanged();
+    });
 
-    event.sourceEvent.stopPropagation();
-    this.sizeChanged();
+   
   }
 
   dragLeftFunc(event) {
@@ -105,10 +109,10 @@ class DraggableDiv extends React.Component {
     this.setState({
       left: newLeft,
       width: newWidth,
+    }, ()=>{
+      event.sourceEvent.stopPropagation();
+      this.sizeChanged();
     });
-
-    event.sourceEvent.stopPropagation();
-    this.sizeChanged();
   }
 
   dragTopFunc(event) {
@@ -126,10 +130,10 @@ class DraggableDiv extends React.Component {
     this.setState({
       top: newTop,
       height: newHeight,
+    }, ()=>{
+      event.sourceEvent.stopPropagation();
+      this.sizeChanged();
     });
-
-    event.sourceEvent.stopPropagation();
-    this.sizeChanged();
   }
 
   dragRightFunc(event) {
@@ -140,10 +144,10 @@ class DraggableDiv extends React.Component {
 
     this.setState({
       width: newWidth,
+    }, ()=>{
+      event.sourceEvent.stopPropagation();
+      this.sizeChanged();
     });
-
-    event.sourceEvent.stopPropagation();
-    this.sizeChanged();
   }
 
   dragBottomLeftFunc(event) {
@@ -165,10 +169,10 @@ class DraggableDiv extends React.Component {
       left: newLeft,
       width: newWidth,
       height: newHeight,
+    }, ()=>{
+      event.sourceEvent.stopPropagation();
+      this.sizeChanged();
     });
-
-    event.sourceEvent.stopPropagation();
-    this.sizeChanged();
   }
 
   dragBottomRightFunc(event) {
@@ -183,10 +187,10 @@ class DraggableDiv extends React.Component {
     this.setState({
       width: newWidth,
       height: newHeight,
+    }, ()=>{
+      event.sourceEvent.stopPropagation();
+      this.sizeChanged();
     });
-
-    event.sourceEvent.stopPropagation();
-    this.sizeChanged();
   }
 
   dragTopRightFunc(event) {
@@ -208,10 +212,10 @@ class DraggableDiv extends React.Component {
       top: newTop,
       width: newWidth,
       height: newHeight,
+    }, ()=>{
+      event.sourceEvent.stopPropagation();
+      this.sizeChanged();
     });
-
-    event.sourceEvent.stopPropagation();
-    this.sizeChanged();
   }
 
   dragTopLeftFunc(event) {
@@ -240,11 +244,10 @@ class DraggableDiv extends React.Component {
       left: newLeft,
       width: newWidth,
       height: newHeight,
+    }, ()=>{
+      event.sourceEvent.stopPropagation();
+      this.sizeChanged();
     });
-
-    event.sourceEvent.stopPropagation();
-
-    this.sizeChanged();
   }
 
   dragStart(event) {
@@ -260,6 +263,7 @@ class DraggableDiv extends React.Component {
   }
 
   sizeChanged() {
+    console.log(this.state)
     if (this.props.sizeChanged) {
       this.props.sizeChanged(this.state);
     }
@@ -353,3 +357,21 @@ DraggableDiv.propTypes = {
 };
 
 export default withTheme(DraggableDiv);
+
+
+export const useMousePosition = () => {
+  const [
+    mousePosition,
+    setMousePosition
+  ] = React.useState({ x: null, y: null });
+  React.useEffect(() => {
+    const updateMousePosition = ev => {
+      setMousePosition({ x: ev.clientX, y: ev.clientY });
+    };
+    window.addEventListener('mousemove', updateMousePosition);
+    return () => {
+      window.removeEventListener('mousemove', updateMousePosition);
+    };
+  }, []);
+  return mousePosition;
+};

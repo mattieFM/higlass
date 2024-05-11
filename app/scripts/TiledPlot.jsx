@@ -628,6 +628,7 @@ class TiledPlot extends React.Component {
   }
 
   handleResizeTrack(uid, width, height) {
+    //console.log(`tried to resize track with values: uid:${uid}, width:${width}, height:${height}`)
     const { tracks } = this.state;
 
     for (const trackType in tracks) {

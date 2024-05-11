@@ -2333,6 +2333,7 @@ class HiGlassComponent extends React.Component {
 
   handleDragStart(/* layout, oldItem, newItem, placeholder, e, element */) {
     this.clearDragTimeout();
+    console.log("----------------drag started----------------")
     this.notifyDragChangedListeners(true);
   }
 
